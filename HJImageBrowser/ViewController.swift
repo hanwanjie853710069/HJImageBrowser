@@ -71,15 +71,13 @@ class ViewController: UIViewController,
         imagea.frame = cell.bounds
         
         imagea.sd_setImageWithURL(NSURL.init(string: self.dataArray[indexPath.row]),
-                                  placeholderImage: getColorImageWithColor(UIColor.whiteColor()))
+                                  placeholderImage: getColorImageWithColor())
         
         
         cell.addSubview(imagea)
         
         return cell
     }
-
-    //返回多少个cell
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
@@ -97,7 +95,7 @@ class ViewController: UIViewController,
         
         bview.indexImage = indexPath.row
         
-        bview.defaultImage = getColorImageWithColor(UIColor.whiteColor())
+        bview.defaultImage = getColorImageWithColor()
         
         bview.arrayImage = dataArray
         
@@ -113,7 +111,7 @@ class ViewController: UIViewController,
         
         if cell == nil {
             
-            return getColorImageWithColor(UIColor.whiteColor())
+            return getColorImageWithColor()
             
         }
         

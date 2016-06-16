@@ -1,21 +1,22 @@
-//
-//  HJImageBrowser.swift
-//  HJImageBrowser
-//
-//  Created by 王木木 on 16/6/16.
-//  Copyright © 2016年 王木木. All rights reserved.
-//
+/*
+ *This file is HJImageBrowser package of all the documents.
+ *HJ<471941655@qq.com>
+ *
+ *Please ask Wang Mu wood file content copyright and license.
+ *file that was distributed with this source code.
+ */
 
 import UIKit
 
 /*
- 获取高清和缩略图图片代理
+ *获取高清和缩略图图片代理
+ *Get Gao Qinghe thumbnail images agent
  */
 protocol  HJImageBrowserDelegate : NSObjectProtocol {
     
-    ///  获取缩略图图片
-    ///  - parameter indexRow: 当前是第几个cell
-    ///  - returns: 获取的缩略图图片
+    ///  获取缩略图图片 && Getting thumbnail images
+    ///  - parameter indexRow: 当前是第几个cell && The current is which a cell
+    ///  - returns: 获取的缩略图图片 && Getting thumbnail images
     func getTheThumbnailImage(indexRow: Int) ->UIImage
     
 }
@@ -26,27 +27,27 @@ class HJImageBrowser:
     UICollectionViewDataSource,
 UICollectionViewDelegateFlowLayout{
     
-    /// 获取高清和缩略图图片代理
+    /// 获取高清和缩略图图片代理 && Get Gao Qinghe thumbnail images agent
     var delegate :HJImageBrowserDelegate?
     
-    /// 承载view  父视图view
+    /// 承载view  父视图view && Bearing the view parent view view
     var bottomView:UIView!
     
-    /// 是否让走预加载图片
+    /// 是否让走预加载图片 && If let go preload picture
     var isShow: Bool!
     
-    /* 如果没有缩略图则显示这张图片
-     如果这张图片也没有则什么也不显示
+    /* 如果没有缩略图则显示这张图片 && If there is no thumbnail drawings show the picture
+     如果这张图片也没有则什么也不显示 && If they aren't in the picture is what also don't show
      */
     var defaultImage: UIImage!
     
-    /// 当前显示的是第几张图片
+    /// 当前显示的是第几张图片 && How many pictures of the currently displayed
     var indexImage: Int!
     
-    /// 高清图片数组
+    /// 高清图片数组 && High-resolution image array
     var arrayImage: [String]!
     
-    //图片展示View
+    //图片展示View && Pictures show the View
     var collectionView:UICollectionView!
     
     override init(frame: CGRect) {
@@ -97,6 +98,7 @@ extension HJImageBrowser{
             ScreenWidth + imageInterval,
             ScreenHeight),
                                                collectionViewLayout: fowLayout)
+        collectionView.allowsMultipleSelection = true
         
         collectionView.registerClass(HJCell.self, forCellWithReuseIdentifier: "cellId")
         
@@ -380,7 +382,7 @@ UIActionSheetDelegate{
             
             if heightS.isNaN || widthS.isNaN {
                 
-                let imageI = getColorImageWithColor(UIColor.whiteColor())
+                let imageI = getColorImageWithColor()
                 
                 heightS = (imageI.size.height)/(imageI.size.width)*self.BottomScroll.frame.size.width
                 
@@ -405,7 +407,6 @@ UIActionSheetDelegate{
                                            self.BottomScroll.frame.size.height*0.5)
     }
     
-    //单击函数
     func oneTouch(sender: UITapGestureRecognizer){
         
         let  tempView = UIImageView.init()
@@ -480,7 +481,6 @@ UIActionSheetDelegate{
         }
     }
     
-    //双击函数
     func twoTouch(sender: UITapGestureRecognizer){
         
         //        let touchPoint = sender.locationInView(sender.view)
@@ -514,7 +514,6 @@ UIActionSheetDelegate{
         //       scroll.setContentOffset(CGPointMake(wWidth, yHeight ), animated: true)
     }
     
-    //长按手势
     func handleLongpressGesture(sender : UILongPressGestureRecognizer){
         
         if (sender.state == .Began) {
@@ -630,25 +629,28 @@ UIActionSheetDelegate{
     
 }
 
-/// Tools 工具类
+/// Tools 工具类 && The Tools Tools
 import Foundation
 
-///屏幕高度
+///屏幕高度 && The screen height
 let ScreenHeight = UIScreen.mainScreen().bounds.size.height
 
-///屏幕宽度
+///屏幕宽度 && The width of the screen
 let ScreenWidth = UIScreen.mainScreen().bounds.size.width
 
-//图片与图片之间的间隔
+///图片与图片之间的间隔 && The interval between images and pictures
 let imageInterval = CGFloat(20)
 
-//视图的背景颜色
+///视图的背景颜色 && The background color of the view
 let viewTheBackgroundColor = UIColor.blackColor()
 
+/// 动画时间 && Animation time
 let animationTime = 0.5
 
-//通过颜色来生成一个纯色图片
-func getColorImageWithColor(color:UIColor) ->(UIImage){
+//默认背景图片颜色获取和设置 && The default color to get and set background image
+func getColorImageWithColor() ->(UIImage){
+    
+    let color = UIColor.whiteColor()
     
     let rect = CGRectMake(0, 0, ScreenWidth, 200)
     
