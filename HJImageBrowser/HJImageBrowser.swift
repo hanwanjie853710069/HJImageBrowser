@@ -49,7 +49,6 @@ UICollectionViewDelegateFlowLayout{
     //图片展示View
     var collectionView:UICollectionView!
     
-    
     override init(frame: CGRect) {
         
         super.init(frame: frame)
@@ -72,25 +71,31 @@ extension HJImageBrowser{
     
     func  creatUI(){
         
-        self.backgroundColor = UIColor.blackColor()
+        self.backgroundColor = viewTheBackgroundColor
         
         self.bottomView = UIView()
         
         isShow = false
         
+        creatCollectionView()
+
+    }
+    
+    func  creatCollectionView(){
+    
         let fowLayout = UICollectionViewFlowLayout.init()
         
         fowLayout.minimumLineSpacing = 0;
         
         fowLayout.scrollDirection = .Horizontal
         
-        fowLayout.itemSize = CGSizeMake(UIScreen.mainScreen().bounds.size.width+20,
-                                        UIScreen.mainScreen().bounds.size.height)
+        fowLayout.itemSize = CGSizeMake(ScreenWidth + imageInterval,
+                                        ScreenHeight)
         
         collectionView = UICollectionView.init(frame: CGRectMake(0,
             0,
-            UIScreen.mainScreen().bounds.size.width+20,
-            UIScreen.mainScreen().bounds.size.height),
+            ScreenWidth + imageInterval,
+            ScreenHeight),
                                                collectionViewLayout: fowLayout)
         
         collectionView.registerClass(HJCell.self, forCellWithReuseIdentifier: "cellId")
@@ -103,7 +108,7 @@ extension HJImageBrowser{
         
         collectionView.alpha = 0
         
-        collectionView.backgroundColor = UIColor.blackColor()
+        collectionView.backgroundColor = viewTheBackgroundColor
         
         self.addSubview(collectionView)
         
@@ -115,7 +120,7 @@ extension HJImageBrowser{
         
         if (isShow == false) {
             
-            self.collectionView.contentOffset = CGPointMake((self.frame.size.width + 20) *  CGFloat(self.indexImage), 0)
+            self.collectionView.contentOffset = CGPointMake((self.frame.size.width + imageInterval) *  CGFloat(self.indexImage), 0)
             
             isShow = true
             
@@ -138,7 +143,7 @@ extension HJImageBrowser{
                     
                 }else{
                     
-                    UIView.animateWithDuration(0.5, animations: {
+                    UIView.animateWithDuration(animationTime, animations: {
                         
                         tempView.center = self.center
                         
@@ -182,11 +187,11 @@ extension HJImageBrowser{
             
             self.collectionView.alpha = 1
             
-            UIView.animateWithDuration(0.5, animations: {
+            UIView.animateWithDuration(animationTime, animations: {
                 
                 tempView.center = self.center
                 
-                let heightS = (ima.size.height)/(ima.size.width)*UIScreen.mainScreen().bounds.size.width
+                let heightS = (ima.size.height)/(ima.size.width)*ScreenWidth
                 
                 let widthS = (ima.size.width)/(ima.size.height)*heightS
                 
@@ -293,8 +298,8 @@ UIActionSheetDelegate{
         
         BottomScroll = UIScrollView.init(frame: CGRectMake(0,
             0,
-            UIScreen.mainScreen().bounds.size.width,
-            UIScreen.mainScreen().bounds.size.height))
+            ScreenWidth,
+            ScreenHeight))
         
         BottomScroll.delegate = self
         
@@ -302,7 +307,7 @@ UIActionSheetDelegate{
         
         BottomScroll.minimumZoomScale = 1.0;
         
-        BottomScroll.backgroundColor = UIColor.blackColor()
+        BottomScroll.backgroundColor = viewTheBackgroundColor
         
         BigImage = UIImageView.init()
         
@@ -429,7 +434,7 @@ UIActionSheetDelegate{
         
         if ve == nil {
             
-            UIView.animateWithDuration(0.5, animations: {
+            UIView.animateWithDuration(animationTime, animations: {
                 
                 self.superCollectionView().alpha = 0
                 
@@ -448,7 +453,7 @@ UIActionSheetDelegate{
         
         let poin = self.bottomView.convertPoint(ve.center, toView: self)
         
-        let heightS = (ima?.size.height)!/(ima?.size.width)!*UIScreen.mainScreen().bounds.size.width
+        let heightS = (ima?.size.height)!/(ima?.size.width)!*ScreenWidth
         
         let widthS = (ima?.size.width)!/(ima?.size.height)!*heightS
         
@@ -461,7 +466,7 @@ UIActionSheetDelegate{
         
         self.superview?.superview?.backgroundColor = UIColor.clearColor()
         
-        UIView.animateWithDuration(0.5, animations: {
+        UIView.animateWithDuration(animationTime, animations: {
             
             self.superCollectionView().alpha = 0
             
@@ -486,7 +491,7 @@ UIActionSheetDelegate{
         
         let zs = scroll.zoomScale
         
-        UIView .animateWithDuration(0.5) {
+        UIView .animateWithDuration(animationTime) {
             
             scroll.zoomScale = (zs == 1.0) ? 2.0 : 1.0
             
@@ -494,12 +499,12 @@ UIActionSheetDelegate{
             
             var widthS = imageView.frame.width
             
-            if heightS < UIScreen.mainScreen().bounds.size.height {
-                heightS = UIScreen.mainScreen().bounds.size.height
+            if heightS < ScreenHeight{
+                heightS = ScreenHeight
             }
             
-            if widthS < UIScreen.mainScreen().bounds.size.width {
-                widthS = UIScreen.mainScreen().bounds.size.width
+            if widthS < ScreenWidth {
+                widthS = ScreenWidth
             }
             
             imageView.center = CGPointMake(widthS/2, heightS/2)
@@ -533,7 +538,6 @@ UIActionSheetDelegate{
         
     }
     
-    // 提示：参数 空格 参数别名: 类型
     func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         
         if error != nil {
@@ -607,7 +611,6 @@ UIActionSheetDelegate{
         
     }
     
-    
     func findSuperViewWithClass(superViewClass:AnyClass) ->UIView{
         
         var superView = self.superview
@@ -625,7 +628,6 @@ UIActionSheetDelegate{
         return foundSuperView!
     }
     
-    
 }
 
 /// Tools 工具类
@@ -636,6 +638,14 @@ let ScreenHeight = UIScreen.mainScreen().bounds.size.height
 
 ///屏幕宽度
 let ScreenWidth = UIScreen.mainScreen().bounds.size.width
+
+//图片与图片之间的间隔
+let imageInterval = CGFloat(20)
+
+//视图的背景颜色
+let viewTheBackgroundColor = UIColor.blackColor()
+
+let animationTime = 0.5
 
 //通过颜色来生成一个纯色图片
 func getColorImageWithColor(color:UIColor) ->(UIImage){
