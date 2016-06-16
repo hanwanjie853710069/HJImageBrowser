@@ -129,8 +129,6 @@ class ViewController: UIViewController,
         
         return imagV.image!
     }
-
- 
     
 }
 

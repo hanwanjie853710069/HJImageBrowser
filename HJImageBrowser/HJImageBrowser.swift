@@ -319,15 +319,12 @@ UIActionSheetDelegate{
         
         self.addSubview(BottomScroll)
         
-        // 单击图片
         let singleTap = UITapGestureRecognizer.init(target: self,
                                                     action: #selector(self.oneTouch(_:)))
         
-        // 双击放大图片
         let doubleTap = UITapGestureRecognizer.init(target: self,
                                                     action: #selector(self.twoTouch(_:)))
         
-        //长按手势
         let longpressGesutre = UILongPressGestureRecognizer(target: self,
                                                             action: #selector(self.handleLongpressGesture(_:)))
         
