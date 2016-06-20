@@ -12,11 +12,13 @@ import UIKit
  *获取高清和缩略图图片代理
  *Get Gao Qinghe thumbnail images agent
  */
+
 protocol  HJImageBrowserDelegate : NSObjectProtocol {
     
     ///  获取缩略图图片 && Getting thumbnail images
     ///  - parameter indexRow: 当前是第几个cell && The current is which a cell
     ///  - returns: 获取的缩略图图片 && Getting thumbnail images
+    
     func getTheThumbnailImage(indexRow: Int) ->UIImage
     
 }
@@ -98,6 +100,7 @@ extension HJImageBrowser{
             ScreenWidth + imageInterval,
             ScreenHeight),
                                                collectionViewLayout: fowLayout)
+        
         collectionView.allowsMultipleSelection = true
         
         collectionView.registerClass(HJCell.self, forCellWithReuseIdentifier: "cellId")
@@ -123,10 +126,17 @@ extension HJImageBrowser{
         if (isShow == false) {
             
             if (self.indexImage == nil) {
-                let altShow = UIAlertView.init(title: nil, message: "请设置imageInterval属性", delegate: nil, cancelButtonTitle: "确定")
+                
+                let altShow = UIAlertView.init(title: nil,
+                                               message: "请设置imageInterval属性",
+                                               delegate: nil,
+                                               cancelButtonTitle: "确定")
                 altShow.show()
+                
                 self.removeFromSuperview()
+                
                 return
+                
             }
             
             self.collectionView.contentOffset = CGPointMake((self.frame.size.width + imageInterval) *  CGFloat(self.indexImage), 0)
@@ -164,31 +174,32 @@ extension HJImageBrowser{
             
             if self.bottomView == nil {
                 
-                UIView.animateWithDuration(animationTime, animations: {
-                    
-                    
-                }) { (callBack) in
-                    
-                    tempView.removeFromSuperview()
-                    
-                    self.collectionView.hidden = false
-                }
+                let altShow = UIAlertView.init(title: nil,
+                                               message: "请设置bottomView属性",
+                                               delegate: nil,
+                                               cancelButtonTitle: "确定")
+                
+                altShow.show()
+                
+                self.removeFromSuperview()
+                
+                return
                 
             }
+            
+            
+            if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
                 
+                let view = self.bottomView as! UICollectionView
                 
-                if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
-                    
-                    let view = self.bottomView as! UICollectionView
-                    
-                    let path = NSIndexPath.init(forRow: self.indexImage, inSection: 0)
-                    
-                    ve = view.cellForItemAtIndexPath(path)!
-                    
-                }else{
-                    
-                    ve = self.bottomView.subviews[indexImage]
-                }
+                let path = NSIndexPath.init(forRow: self.indexImage, inSection: 0)
+                
+                ve = view.cellForItemAtIndexPath(path)!
+                
+            }else{
+                
+                ve = self.bottomView.subviews[indexImage]
+            }
             
             let rect = self.bottomView.convertRect(ve.frame, toView: self)
             
@@ -207,9 +218,9 @@ extension HJImageBrowser{
                 tempView.frame = CGRectMake(0, 0, widthS, heightS)
                 
                 if heightS < ScreenHeight {
-                
-                     tempView.center = self.center
-                
+                    
+                    tempView.center = self.center
+                    
                 }
                 
             }) { (callBack) in
@@ -217,6 +228,7 @@ extension HJImageBrowser{
                 tempView.removeFromSuperview()
                 
                 self.collectionView.hidden = false
+                
             }
         }
     }
@@ -290,6 +302,8 @@ UIActionSheetDelegate{
     
     var bottomView:UIView!
     
+    var cireView: cireview!
+    
     override init(frame: CGRect) {
         
         super.init(frame: frame)
@@ -303,6 +317,14 @@ UIActionSheetDelegate{
     }
     
     func creatUI(){
+        
+        self.cireView = cireview.init(frame: CGRectMake(0, 0, 50, 50))
+        
+        self.cireView.value  = 0
+        
+        self.cireView.maximumValue = 1
+        
+        self.cireView.center = CGPointMake(ScreenWidth/2, ScreenHeight/2)
         
         BottomScroll = UIScrollView.init(frame: CGRectMake(0,
             0,
@@ -346,24 +368,50 @@ UIActionSheetDelegate{
         
         BottomScroll.addGestureRecognizer(longpressGesutre)
         
+        self.cireView.hidden = true
+        
+        self.addSubview(cireView)
+        
+    }
+    
+    func wangmumu(value:CGFloat){
+        
+        self.cireView.value =  value
+        
     }
     
     internal func setImageWithURL(url:String, placeholderImage:UIImage, defaultImage:UIImage){
         
         self.setBigImageTheSizeOfThe(placeholderImage, defaultImage:defaultImage)
         
+        self.cireView.hidden = false
+        
         BigImage.sd_setImageWithURL(NSURL.init(string: url),
-                                    placeholderImage: placeholderImage) {[unowned self] (image, error, SDImageCacheType, NSURL) in
-                                        
-                                        if image == nil {
-                                            self.setBigImageTheSizeOfThe(placeholderImage, defaultImage:defaultImage)
-                                            return
-                                            
-                                        }
-                                        
-                                        self.setBigImageTheSizeOfThe(image, defaultImage:defaultImage)
-                                        
+                                    placeholderImage: getColorImageWithColor(),
+                                    options: .CacheMemoryOnly,
+                                    progress: { (receivedSize, expectedSize) in
+            
+            let showProgress = Float(receivedSize)/Float(expectedSize)
+            
+            self.wangmumu(CGFloat.init(showProgress))
+            
+        }) { (image, error, cacheType, imageURL) in
+            
+            self.cireView.hidden = true
+            
+            if image == nil {
+                
+                self.setBigImageTheSizeOfThe(placeholderImage, defaultImage:defaultImage)
+                
+                return
+                
+            }
+            
+            self.setBigImageTheSizeOfThe(image, defaultImage:defaultImage)
+            
         }
+        
+        
         
     }
     
@@ -419,8 +467,8 @@ UIActionSheetDelegate{
             self.BottomScroll.contentSize = CGSizeMake(widthS, heightS)
             
         }else{
-        
-        self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - heightS)/2, 0, 0, 0)
+            
+            self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - heightS)/2, 0, 0, 0)
             
         }
     }
@@ -539,12 +587,12 @@ UIActionSheetDelegate{
                 
                 if imageView.frame.size.height > ScreenHeight {
                     
-                self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-                
+                    self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                    
                 }else{
-                
-                self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - (imageView.frame.size.height))/2, 0, 0, 0)
-                
+                    
+                    self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - (imageView.frame.size.height))/2, 0, 0, 0)
+                    
                 }
                 
             }else{
@@ -558,7 +606,7 @@ UIActionSheetDelegate{
                     self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - (imageView.frame.size.height))/2, 0, 0, 0)
                     
                 }
-
+                
             }
         }
     }
@@ -610,31 +658,34 @@ UIActionSheetDelegate{
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
-       
+        
         return scrollView.subviews[0]
         
     }
     
     func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
         
+        self.BottomScroll.contentInset = UIEdgeInsetsZero
+        
         let image = scrollView.subviews[0]
         
         if image.frame.size.height > ScreenHeight {
             
-//            UIView.animateWithDuration(0.5, animations: {
+            //            UIView.animateWithDuration(0.5, animations: {
             
-//                
-//              self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-//
-//            })
-//            
+            //
+            //              self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+            
+            //
+            //            })
+            //
             
             
         }else{
             
             UIView.animateWithDuration(0.2, animations: {
-            
-            self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - image.frame.size.height)/2, 0, 0, 0)
+                
+                self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - image.frame.size.height)/2, 0, 0, 0)
                 
             })
         }
@@ -683,6 +734,87 @@ UIActionSheetDelegate{
     
 }
 
+/// 进度框 && The progress of the box
+class cireview: UIView{
+    
+    var value: CGFloat = 0 {
+        didSet {
+            self.setNeedsDisplay()
+        }
+    }
+    
+    var maximumValue: CGFloat = 0 {
+        didSet { self.setNeedsDisplay() }
+    }
+    
+    var contentLabel: UILabel!
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        self.opaque = false
+        
+        self.backgroundColor = progressViewBackColor
+        
+        contentLabel = UILabel.init(frame: CGRectMake(10, 10, 30, 30))
+        
+        contentLabel.textAlignment = .Center
+        
+        contentLabel.textColor = progressColor
+        
+        contentLabel.adjustsFontSizeToFitWidth = true
+        
+        contentLabel.text = "0.0%"
+        
+        self.addSubview(contentLabel)
+    }
+    
+    
+    override func drawRect(rect: CGRect) {
+        super.drawRect(rect)
+        
+        let lineWidth: CGFloat = 5.0
+        
+        let radius = CGRectGetWidth(rect) / 2.0 - lineWidth
+        
+        let centerX = CGRectGetMidX(rect)
+        
+        let centerY = CGRectGetMidY(rect)
+        
+        let startAngle = CGFloat(-90 * M_PI / 180)
+    
+        let endAngle = CGFloat(((self.value / self.maximumValue) * 360 - 90) ) * CGFloat(M_PI) / 180
+        
+        let context = UIGraphicsGetCurrentContext()
+        
+        CGContextSetStrokeColorWithColor(context, progressArticleColor)
+        
+        CGContextSetLineWidth(context, lineWidth)
+        
+        CGContextAddArc(context, centerX, centerY, radius, startAngle, endAngle, 0)
+        
+        CGContextStrokePath(context)
+        
+        CGContextSetStrokeColorWithColor(context, progressBackColor)
+        
+        CGContextAddArc(context, centerX, centerY, radius, startAngle, endAngle, 1)
+        
+        CGContextStrokePath(context)
+        
+        let content = Int(self.value * 100)
+        
+        self.contentLabel.text = String.init(content) + "%"
+
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+}
+
+
 /// Tools 工具类 && The Tools Tools
 import Foundation
 
@@ -701,10 +833,22 @@ let viewTheBackgroundColor = UIColor.blackColor()
 /// 动画时间 && Animation time
 let animationTime = 0.5
 
+///  进度条字体颜色 The progress bar font color
+let progressColor = UIColor.blackColor()
+
+///  进度条 条的背景颜色 && The background color of the article the progress bar
+let progressBackColor =  UIColor.darkGrayColor().CGColor
+
+///  进度条 条的颜色 && The progress bar of the color
+let progressArticleColor =  UIColor.whiteColor().CGColor
+
+///  进度条View背景色 && The progress bar View the background color
+let progressViewBackColor = UIColor.clearColor()
+
 //默认背景图片颜色获取和设置 && The default color to get and set background image
 func getColorImageWithColor() ->(UIImage){
     
-    let color = UIColor.whiteColor()
+    let color = UIColor.brownColor()
     
     let rect = CGRectMake(0, 0, ScreenWidth, 200)
     
@@ -723,6 +867,3 @@ func getColorImageWithColor() ->(UIImage){
     return img;
     
 }
-
-
-

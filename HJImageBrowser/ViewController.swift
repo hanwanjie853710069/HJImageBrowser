@@ -14,9 +14,21 @@ class ViewController: UIViewController,
     UICollectionViewDelegateFlowLayout,
     HJImageBrowserDelegate{
 
+    var dataArray1 = ["http://p2.qhimg.com/t=011fc13354f12d1a46.jpg",
+                     "http://img.bimg.126.ne=t/photo/Q_YgZ2eYuC1qtuBXeAFMXQ==/1457758904385917359=.jpg",
+                     "http://img.taopic.com/uploads/al=limg/140714/234975-140G4155Z571.jpg",
+                     "http://image.tianjimedia.com/uplo=adImages/2012/233/37/HF17SP1LG9QQ.jpg",
+                     "http://pic23.nipic.com/20120908/3=073979_090316421000_2.jpg",
+                     "http://image.tianjimedia.com/uplo==adImages/2015/129/56/J63MI042Z4P8.jpg",
+                     "http://image.tianjimedia.com/uplo=adImages/2012/233/26/QNK85ZK47V2R.jpg",
+                     "http://n.7k7kimg.cn/2015/0723/1437=613406241.jpg",
+                     "http://image.tianjimedia.com/uploadImages/2=011/361/KD85LY2UE08Q.jpg",
+                     "http://img.taopic.com/uploads/allimg/120425/9=5478-12042511120249.jpg",
+                     "http://v1.qzone.cc/pic/201306/29/17/10/51cea48=cb4d54713.jpg%21600x600.jpg"]
+    
     var dataArray = ["http://p2.qhimg.com/t011fc13354f12d1a46.jpg",
                      "http://img.bimg.126.net/photo/Q_YgZ2eYuC1qtuBXeAFMXQ==/1457758904385917359.jpg",
-                     "http://www.xiufa.com/BJUI/plugins/kindeditor_4.1.10/attached/image/20160427/20160427020327_69298.png",
+                     "http://img.taopic.com/uploads/allimg/140714/234975-140G4155Z571.jpg",
                      "http://image.tianjimedia.com/uploadImages/2012/233/37/HF17SP1LG9QQ.jpg",
                      "http://pic23.nipic.com/20120908/3073979_090316421000_2.jpg",
                      "http://image.tianjimedia.com/uploadImages/2015/129/56/J63MI042Z4P8.jpg",
@@ -75,7 +87,6 @@ class ViewController: UIViewController,
         
         imagea.sd_setImageWithURL(NSURL.init(string: self.dataArray[indexPath.row]),
                                   placeholderImage: getColorImageWithColor())
-        
         
         cell.addSubview(imagea)
         
