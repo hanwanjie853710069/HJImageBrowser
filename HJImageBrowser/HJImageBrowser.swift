@@ -74,7 +74,6 @@ UICollectionViewDelegateFlowLayout{
 
 extension HJImageBrowser{
     
-    
     func  creatUI(){
         
         self.backgroundColor = viewTheBackgroundColor
@@ -617,7 +616,7 @@ UIActionSheetDelegate{
             
         }
         
-        UIView .animateWithDuration(0.5) {
+        UIView.animateWithDuration(0.5) {
             
             if scroll.zoomScale==2.0{
                 
@@ -711,21 +710,17 @@ UIActionSheetDelegate{
         
     }
     
-    func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
-        
+    func scrollViewDidZoom(scrollView: UIScrollView) {
+    
         let image = scrollView.subviews[0]
         
         if image.frame.size.height > ScreenHeight {
             
-//                        UIView.animateWithDuration(0.5, animations: {
-//            
-//            
-//                          self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-//            
-//            
-//                        })
-            
-            
+            UIView.animateWithDuration(0.2, animations: {
+                
+                self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                
+            })
             
         }else{
             
@@ -735,9 +730,7 @@ UIActionSheetDelegate{
                 
             })
         }
-        
     }
-    
     
     func indexPath() ->NSIndexPath{
         
