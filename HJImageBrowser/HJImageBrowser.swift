@@ -74,16 +74,16 @@ extension HJImageBrowser{
         
         self.backgroundColor = viewTheBackgroundColor
         
-        self.bottomView = UIView()
+        //        self.bottomView = UIView()
         
         isShow = false
         
         creatCollectionView()
-
+        
     }
     
     func  creatCollectionView(){
-    
+        
         let fowLayout = UICollectionViewFlowLayout.init()
         
         fowLayout.minimumLineSpacing = 0;
@@ -122,6 +122,13 @@ extension HJImageBrowser{
         
         if (isShow == false) {
             
+            if (self.indexImage == nil) {
+                let altShow = UIAlertView.init(title: nil, message: "请设置imageInterval属性", delegate: nil, cancelButtonTitle: "确定")
+                altShow.show()
+                self.removeFromSuperview()
+                return
+            }
+            
             self.collectionView.contentOffset = CGPointMake((self.frame.size.width + imageInterval) *  CGFloat(self.indexImage), 0)
             
             isShow = true
@@ -145,19 +152,7 @@ extension HJImageBrowser{
                     
                 }else{
                     
-                    UIView.animateWithDuration(animationTime, animations: {
-                        
-                        tempView.center = self.center
-                        
-                        tempView.bounds = CGRectMake(0, 0, 300, 300)
-                        
-                        self.collectionView.alpha = 1
-                        
-                    }) { (callBack) in
-                        
-                        tempView.removeFromSuperview()
-                        
-                    }
+                    ima = getColorImageWithColor()
                     
                 }
                 
@@ -165,21 +160,35 @@ extension HJImageBrowser{
             
             tempView.image = ima
             
+            var ve = UIView()
             
-            let ve:UIView!
-            
-            if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
+            if self.bottomView == nil {
                 
-                let view = self.bottomView as! UICollectionView
+                UIView.animateWithDuration(animationTime, animations: {
+                    
+                    
+                }) { (callBack) in
+                    
+                    tempView.removeFromSuperview()
+                    
+                    self.collectionView.hidden = false
+                }
                 
-                let path = NSIndexPath.init(forRow: self.indexImage, inSection: 0)
-                
-                ve = view.cellForItemAtIndexPath(path)
-                
-            }else{
-                
-                ve = self.bottomView.subviews[indexImage]
             }
+                
+                
+                if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
+                    
+                    let view = self.bottomView as! UICollectionView
+                    
+                    let path = NSIndexPath.init(forRow: self.indexImage, inSection: 0)
+                    
+                    ve = view.cellForItemAtIndexPath(path)!
+                    
+                }else{
+                    
+                    ve = self.bottomView.subviews[indexImage]
+                }
             
             let rect = self.bottomView.convertRect(ve.frame, toView: self)
             
@@ -189,28 +198,25 @@ extension HJImageBrowser{
             
             self.collectionView.alpha = 1
             
+            let heightS = (ima.size.height)/(ima.size.width)*ScreenWidth
+            
+            let widthS = (ima.size.width)/(ima.size.height)*heightS
+            
             UIView.animateWithDuration(animationTime, animations: {
                 
-                tempView.center = self.center
+                tempView.frame = CGRectMake(0, 0, widthS, heightS)
                 
-                let heightS = (ima.size.height)/(ima.size.width)*ScreenWidth
+                if heightS < ScreenHeight {
                 
-                let widthS = (ima.size.width)/(ima.size.height)*heightS
+                     tempView.center = self.center
                 
-                if heightS.isNaN || widthS.isNaN {
-                    
-                    return
-                    
                 }
-                
-                tempView.bounds = CGRectMake(0, 0, widthS, heightS)
                 
             }) { (callBack) in
                 
-                self.collectionView.hidden = false
-                
                 tempView.removeFromSuperview()
                 
+                self.collectionView.hidden = false
             }
         }
     }
@@ -363,6 +369,12 @@ UIActionSheetDelegate{
     
     func setBigImageTheSizeOfThe(bImage:UIImage, defaultImage:UIImage){
         
+        self.BottomScroll.contentOffset = CGPointZero
+        
+        self.BottomScroll.contentSize = CGSizeZero
+        
+        self.BottomScroll.contentInset = UIEdgeInsetsZero
+        
         self.BottomScroll.zoomScale = 1
         
         var heightS = (bImage.size.height)/(bImage.size.width)*self.BottomScroll.frame.size.width
@@ -398,10 +410,19 @@ UIActionSheetDelegate{
             
         }
         
-        self.BigImage.frame.size = CGSizeMake(widthS, heightS)
+        self.BigImage.frame = CGRectMake(0, 0, widthS, heightS)
         
-        self.BigImage.center = CGPointMake(self.BottomScroll.frame.size.width*0.5,
-                                           self.BottomScroll.frame.size.height*0.5)
+        if heightS > ScreenHeight {
+            
+            self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+            
+            self.BottomScroll.contentSize = CGSizeMake(widthS, heightS)
+            
+        }else{
+        
+        self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - heightS)/2, 0, 0, 0)
+            
+        }
     }
     
     func oneTouch(sender: UITapGestureRecognizer){
@@ -427,7 +448,9 @@ UIActionSheetDelegate{
             ve = view.cellForItemAtIndexPath(path)
             
         }else{
-             ve = self.bottomView.subviews[self.indexPath().row]
+            
+            ve = self.bottomView.subviews[self.indexPath().row]
+            
         }
         
         if ve == nil {
@@ -436,7 +459,7 @@ UIActionSheetDelegate{
                 
                 self.superCollectionView().alpha = 0
                 
-                 self.superview?.superview?.alpha = 0
+                self.superview?.superview?.alpha = 0
                 
             }) { (callBack) in
                 
@@ -446,7 +469,7 @@ UIActionSheetDelegate{
             
             return
         }
-
+        
         let rect = self.bottomView.convertRect(ve.frame, toView: self)
         
         let poin = self.bottomView.convertPoint(ve.center, toView: self)
@@ -457,8 +480,11 @@ UIActionSheetDelegate{
         
         tempView.frame = CGRectMake(0, 0, widthS, heightS)
         
-        tempView.center = (self.superview?.superview?.center)!
-        
+        if ima?.size.height < ScreenHeight {
+            
+            tempView.center = (self.superview?.superview?.center)!
+            
+        }
         
         self.superCollectionView().alpha = 0.5
         
@@ -473,6 +499,7 @@ UIActionSheetDelegate{
             tempView.bounds = rect
             
         }) { (callBack) in
+            
             self.superview?.superview?.removeFromSuperview()
             
         }
@@ -480,7 +507,7 @@ UIActionSheetDelegate{
     
     func twoTouch(sender: UITapGestureRecognizer){
         
-        //        let touchPoint = sender.locationInView(sender.view)
+        let touchPoint = sender.locationInView(sender.view)
         
         let scroll =  sender.view as! UIScrollView
         
@@ -488,27 +515,52 @@ UIActionSheetDelegate{
         
         let zs = scroll.zoomScale
         
-        UIView .animateWithDuration(animationTime) {
+        UIView.animateWithDuration(0.5) {
             
-            scroll.zoomScale = (zs == 1.0) ? 2.0 : 1.0
-            
-            var heightS = imageView.frame.height
-            
-            var widthS = imageView.frame.width
-            
-            if heightS < ScreenHeight{
-                heightS = ScreenHeight
-            }
-            
-            if widthS < ScreenWidth {
-                widthS = ScreenWidth
-            }
-            
-            imageView.center = CGPointMake(widthS/2, heightS/2)
+            scroll.zoomScale = (zs == 1.0) ? 2.0 : 0.0
             
         }
         
-        //       scroll.setContentOffset(CGPointMake(wWidth, yHeight ), animated: true)
+        UIView .animateWithDuration(0.5) {
+            
+            if scroll.zoomScale==2.0{
+                
+                let rectHeight = (self.frame.size.height)/scroll.zoomScale
+                
+                let rectWidth = self.frame.size.width/scroll.zoomScale
+                
+                let rectX = touchPoint.x-rectWidth/2.0
+                
+                let rectY = touchPoint.y-rectHeight/2.0
+                
+                let zoomRect = CGRectMake(rectX, rectY, rectWidth, rectHeight)
+                
+                scroll.zoomToRect(zoomRect, animated: false)
+                
+                if imageView.frame.size.height > ScreenHeight {
+                    
+                self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                
+                }else{
+                
+                self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - (imageView.frame.size.height))/2, 0, 0, 0)
+                
+                }
+                
+            }else{
+                
+                if imageView.frame.size.height > ScreenHeight {
+                    
+                    self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                    
+                }else{
+                    
+                    self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - (imageView.frame.size.height))/2, 0, 0, 0)
+                    
+                }
+
+            }
+        }
     }
     
     func handleLongpressGesture(sender : UILongPressGestureRecognizer){
@@ -558,7 +610,7 @@ UIActionSheetDelegate{
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
-        
+       
         return scrollView.subviews[0]
         
     }
@@ -567,29 +619,28 @@ UIActionSheetDelegate{
         
         let image = scrollView.subviews[0]
         
-        var heightS = scrollView.contentSize.height
-        
-        var widthS = scrollView.contentSize.width
-        
-        if scrollView.contentSize.height <  scrollView.frame.size.height{
+        if image.frame.size.height > ScreenHeight {
             
-            heightS = scrollView.frame.size.height
+//            UIView.animateWithDuration(0.5, animations: {
             
-        }
-        
-        if scrollView.contentSize.width <  scrollView.frame.size.width{
+//                
+//              self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+//
+//            })
+//            
             
-            widthS = scrollView.frame.size.width
             
-        }
-        
-        UIView .animateWithDuration(0.2) {
+        }else{
             
-            image.center = CGPointMake(widthS*0.5, heightS*0.5)
+            UIView.animateWithDuration(0.2, animations: {
             
+            self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - image.frame.size.height)/2, 0, 0, 0)
+                
+            })
         }
         
     }
+    
     
     func indexPath() ->NSIndexPath{
         
@@ -614,11 +665,17 @@ UIActionSheetDelegate{
         var foundSuperView:UIView?
         
         while (superView != nil && foundSuperView == nil) {
+            
             if ((superView?.isKindOfClass(superViewClass)) != nil) {
+                
                 foundSuperView = superView
+                
             }else{
+                
                 superView = superView!.superview;
+                
             }
+            
         }
         
         return foundSuperView!

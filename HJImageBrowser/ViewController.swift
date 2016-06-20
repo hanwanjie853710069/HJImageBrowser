@@ -14,8 +14,8 @@ class ViewController: UIViewController,
     UICollectionViewDelegateFlowLayout,
     HJImageBrowserDelegate{
 
-    var dataArray = ["http://www.bz55.com/uploads/allimg/100709/094AJ1I-5.jpg",
-                     "http://www.wed114.cn/jiehun/uploads/allimg/160426/39_160426110624_1.jpg",
+    var dataArray = ["http://p2.qhimg.com/t011fc13354f12d1a46.jpg",
+                     "http://img.bimg.126.net/photo/Q_YgZ2eYuC1qtuBXeAFMXQ==/1457758904385917359.jpg",
                      "http://www.xiufa.com/BJUI/plugins/kindeditor_4.1.10/attached/image/20160427/20160427020327_69298.png",
                      "http://image.tianjimedia.com/uploadImages/2012/233/37/HF17SP1LG9QQ.jpg",
                      "http://pic23.nipic.com/20120908/3073979_090316421000_2.jpg",
@@ -32,6 +32,8 @@ class ViewController: UIViewController,
         
         fowLayout.itemSize = CGSizeMake(ScreenWidth/4,
                                         ScreenWidth/4)
+        
+        fowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         
         let collect = UICollectionView.init(frame: CGRectMake(0,
             0,
@@ -60,6 +62,7 @@ class ViewController: UIViewController,
         self.view.backgroundColor = UIColor.darkGrayColor()
         
         self.view.addSubview(collectionView)
+    
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
