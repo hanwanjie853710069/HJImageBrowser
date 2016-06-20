@@ -52,7 +52,7 @@ UICollectionViewDelegateFlowLayout{
     /// 图片展示View && Pictures show the View
     var collectionView:UICollectionView!
     
-    /// 图片个数显示
+    /// 图片个数显示 && The number of picture
     var imageNumberLabel: UILabel!
     
     override init(frame: CGRect) {
