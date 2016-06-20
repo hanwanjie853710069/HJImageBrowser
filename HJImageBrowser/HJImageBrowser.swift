@@ -49,8 +49,11 @@ UICollectionViewDelegateFlowLayout{
     /// 高清图片数组 && High-resolution image array
     var arrayImage: [String]!
     
-    //图片展示View && Pictures show the View
+    /// 图片展示View && Pictures show the View
     var collectionView:UICollectionView!
+    
+    /// 图片个数显示
+    var imageNumberLabel: UILabel!
     
     override init(frame: CGRect) {
         
@@ -113,15 +116,33 @@ extension HJImageBrowser{
         
         collectionView.alpha = 0
         
+        collectionView.showsHorizontalScrollIndicator = false
+        
+        collectionView.showsVerticalScrollIndicator = false
+        
         collectionView.backgroundColor = viewTheBackgroundColor
         
+        imageNumberLabel = UILabel.init(frame: CGRectMake(0, ScreenHeight - 30, ScreenWidth, 20))
+        
+        imageNumberLabel.backgroundColor = UIColor.clearColor()
+        
+        imageNumberLabel.textColor = UIColor.whiteColor()
+        
+        imageNumberLabel.textAlignment = .Center
+        
+        imageNumberLabel.alpha = 0
+        
         self.addSubview(collectionView)
+        
+        self.addSubview(imageNumberLabel)
         
     }
     
     override func layoutSubviews(){
         
         super.layoutSubviews()
+        
+        imageNumberLabel.text = String.init(self.indexImage) + "/" + "\(self.arrayImage.count)"
         
         if (isShow == false) {
             
@@ -285,6 +306,31 @@ extension HJImageBrowser{
         indexImage = firstIndexPath?.row
     }
     
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        
+        let path = self.collectionView.indexPathForItemAtPoint(self.collectionView.contentOffset)
+        let number = path?.row
+        
+        imageNumberLabel.text = "\(number!)" + "/" + "\(self.arrayImage.count)"
+        
+        UIView.animateWithDuration(3) {
+            
+            self.imageNumberLabel.alpha = 0
+            
+        }
+        
+    }
+    
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        
+        UIView.animateWithDuration(0.2) {
+            
+            self.imageNumberLabel.alpha = 1
+            
+        }
+        
+    }
+    
 }
 
 
@@ -323,6 +369,8 @@ UIActionSheetDelegate{
         self.cireView.value  = 0
         
         self.cireView.maximumValue = 1
+        
+        self.cireView.userInteractionEnabled = false
         
         self.cireView.center = CGPointMake(ScreenWidth/2, ScreenHeight/2)
         
@@ -374,7 +422,7 @@ UIActionSheetDelegate{
         
     }
     
-    func wangmumu(value:CGFloat){
+    func setUpTheValue(value:CGFloat){
         
         self.cireView.value =  value
         
@@ -393,7 +441,7 @@ UIActionSheetDelegate{
             
             let showProgress = Float(receivedSize)/Float(expectedSize)
             
-            self.wangmumu(CGFloat.init(showProgress))
+            self.setUpTheValue(CGFloat.init(showProgress))
             
         }) { (image, error, cacheType, imageURL) in
             
@@ -665,20 +713,18 @@ UIActionSheetDelegate{
     
     func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
         
-        self.BottomScroll.contentInset = UIEdgeInsetsZero
-        
         let image = scrollView.subviews[0]
         
         if image.frame.size.height > ScreenHeight {
             
-            //            UIView.animateWithDuration(0.5, animations: {
+//                        UIView.animateWithDuration(0.5, animations: {
+//            
+//            
+//                          self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+//            
+//            
+//                        })
             
-            //
-            //              self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-            
-            //
-            //            })
-            //
             
             
         }else{
@@ -769,8 +815,7 @@ class cireview: UIView{
         
         self.addSubview(contentLabel)
     }
-    
-    
+
     override func drawRect(rect: CGRect) {
         super.drawRect(rect)
         
@@ -842,10 +887,10 @@ let progressBackColor =  UIColor.darkGrayColor().CGColor
 ///  进度条 条的颜色 && The progress bar of the color
 let progressArticleColor =  UIColor.whiteColor().CGColor
 
-///  进度条View背景色 && The progress bar View the background color
+/// 进度条View背景色 && The progress bar View the background color
 let progressViewBackColor = UIColor.clearColor()
 
-//默认背景图片颜色获取和设置 && The default color to get and set background image
+/// 默认背景图片颜色获取和设置 && The default color to get and set background image
 func getColorImageWithColor() ->(UIImage){
     
     let color = UIColor.brownColor()
