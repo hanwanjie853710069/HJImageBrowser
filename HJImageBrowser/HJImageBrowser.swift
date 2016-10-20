@@ -675,7 +675,7 @@ UIActionSheetDelegate{
             
             UIImageWriteToSavedPhotosAlbum(self.BigImage.image!,
                                            self,
-                                           Selector("image:didFinishSavingWithError:contextInfo:"), nil)
+                                           #selector(HJCell.image(_:didFinishSavingWithError:contextInfo:)), nil)
             
         }
         
@@ -826,19 +826,19 @@ class cireview: UIView{
         
         let context = UIGraphicsGetCurrentContext()
         
-        CGContextSetStrokeColorWithColor(context, progressArticleColor)
+        CGContextSetStrokeColorWithColor(context!, progressArticleColor)
         
-        CGContextSetLineWidth(context, lineWidth)
+        CGContextSetLineWidth(context!, lineWidth)
         
-        CGContextAddArc(context, centerX, centerY, radius, startAngle, endAngle, 0)
+        CGContextAddArc(context!, centerX, centerY, radius, startAngle, endAngle, 0)
         
-        CGContextStrokePath(context)
+        CGContextStrokePath(context!)
         
-        CGContextSetStrokeColorWithColor(context, progressBackColor)
+        CGContextSetStrokeColorWithColor(context!, progressBackColor)
         
-        CGContextAddArc(context, centerX, centerY, radius, startAngle, endAngle, 1)
+        CGContextAddArc(context!, centerX, centerY, radius, startAngle, endAngle, 1)
         
-        CGContextStrokePath(context)
+        CGContextStrokePath(context!)
         
         let content = Int(self.value * 100)
         
@@ -894,14 +894,14 @@ func getColorImageWithColor() ->(UIImage){
     
     let context = UIGraphicsGetCurrentContext();
     
-    CGContextSetFillColorWithColor(context, color.CGColor);
+    CGContextSetFillColorWithColor(context!, color.CGColor);
     
-    CGContextFillRect(context, rect);
+    CGContextFillRect(context!, rect);
     
     let img = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
     
-    return img;
+    return img!;
     
 }
