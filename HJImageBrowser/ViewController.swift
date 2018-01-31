@@ -30,18 +30,14 @@ class ViewController: UIViewController,
         
         let fowLayout = UICollectionViewFlowLayout.init()
         
-        fowLayout.itemSize = CGSizeMake(ScreenWidth/4,
-                                        ScreenWidth/4)
+        fowLayout.itemSize = CGSize.init(width: ScreenWidth/4, height: ScreenWidth/4);
         
         fowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         
-        let collect = UICollectionView.init(frame: CGRectMake(0,
-            0,
-            ScreenWidth,
-            ScreenHeight),
+        let collect = UICollectionView.init(frame: CGRect.init(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight),
                                             collectionViewLayout: fowLayout)
         
-        collect.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "cellId")
+        collect.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cellId")
         
         collect.delegate = self
         
@@ -57,23 +53,23 @@ class ViewController: UIViewController,
         
         dataArray = dataArray + dataArray + dataArray
         
-        self.collectionView.backgroundColor = UIColor.darkGrayColor()
+        self.collectionView.backgroundColor = UIColor.darkGray
         
-        self.view.backgroundColor = UIColor.darkGrayColor()
+        self.view.backgroundColor = UIColor.darkGray
         
         self.view.addSubview(collectionView)
     
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellId", forIndexPath: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath as IndexPath)
         
         let imagea = UIImageView.init()
         
         imagea.frame = cell.bounds
         
-        imagea.sd_setImageWithURL(NSURL.init(string: self.dataArray[indexPath.row]),
+        imagea.sd_setImage(with: (NSURL.init(string: self.dataArray[indexPath.row])! as URL),
                                   placeholderImage: getColorImageWithColor())
         
         cell.addSubview(imagea)
@@ -81,13 +77,13 @@ class ViewController: UIViewController,
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return dataArray.count
         
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let bview = HJImageBrowser()
         
@@ -107,9 +103,9 @@ class ViewController: UIViewController,
     
     func getTheThumbnailImage(indexRow: Int) -> UIImage {
         
-        let indexPath = NSIndexPath.init(forRow: indexRow, inSection: 0)
+        let indexPath = NSIndexPath(row: indexRow, section: 0)
         
-        let cell = self.collectionView.cellForItemAtIndexPath(indexPath)
+        let cell = self.collectionView.cellForItem(at: indexPath as IndexPath)
         
         if cell == nil {
             
@@ -121,7 +117,7 @@ class ViewController: UIViewController,
         
         for temp in (cell?.subviews)! {
             
-            if temp.isKindOfClass(UIImageView.classForCoder()) {
+            if temp.isKind(of: UIImageView.classForCoder()) {
                 
                 imagV = temp as! UIImageView
                 

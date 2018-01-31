@@ -92,22 +92,18 @@ extension HJImageBrowser{
         
         fowLayout.minimumLineSpacing = 0;
         
-        fowLayout.scrollDirection = .Horizontal
+        fowLayout.scrollDirection = .horizontal
         
-        fowLayout.itemSize = CGSizeMake(ScreenWidth + imageInterval,
-                                        ScreenHeight)
+        fowLayout.itemSize = CGSize.init(width: ScreenWidth + imageInterval, height: ScreenHeight)
         
-        collectionView = UICollectionView.init(frame: CGRectMake(0,
-            0,
-            ScreenWidth + imageInterval,
-            ScreenHeight),
+        collectionView = UICollectionView.init(frame: CGRect.init(x: 0, y: 0, width: ScreenWidth + imageInterval, height: ScreenHeight),
                                                collectionViewLayout: fowLayout)
         
         collectionView.allowsMultipleSelection = true
         
-        collectionView.registerClass(HJCell.self, forCellWithReuseIdentifier: "cellId")
+        collectionView.register(HJCell.self, forCellWithReuseIdentifier: "cellId")
         
-        collectionView.pagingEnabled = true
+        collectionView.isPagingEnabled = true
         
         collectionView.delegate = self
         
@@ -121,13 +117,13 @@ extension HJImageBrowser{
         
         collectionView.backgroundColor = viewTheBackgroundColor
         
-        imageNumberLabel = UILabel.init(frame: CGRectMake(0, ScreenHeight - 30, ScreenWidth, 20))
+        imageNumberLabel = UILabel.init(frame: CGRect(x: 0, y: ScreenHeight - 30, width: ScreenWidth, height: 20))
         
-        imageNumberLabel.backgroundColor = UIColor.clearColor()
+        imageNumberLabel.backgroundColor = UIColor.clear
         
-        imageNumberLabel.textColor = UIColor.whiteColor()
+        imageNumberLabel.textColor = UIColor.white
         
-        imageNumberLabel.textAlignment = .Center
+        imageNumberLabel.textAlignment = .center
         
         imageNumberLabel.alpha = 0
         
@@ -159,7 +155,7 @@ extension HJImageBrowser{
                 
             }
             
-            self.collectionView.contentOffset = CGPointMake((self.frame.size.width + imageInterval) *  CGFloat(self.indexImage), 0)
+            self.collectionView.contentOffset = CGPoint(x: (self.frame.size.width + imageInterval) *  CGFloat(self.indexImage), y: 0)
             
             isShow = true
             
@@ -169,9 +165,9 @@ extension HJImageBrowser{
             
             self.addSubview(tempView)
             
-            if ((self.delegate?.getTheThumbnailImage(self.indexImage)) != nil) {
+            if ((self.delegate?.getTheThumbnailImage(indexRow: self.indexImage)) != nil) {
                 
-                ima = (self.delegate?.getTheThumbnailImage(self.indexImage))!
+                ima = (self.delegate?.getTheThumbnailImage(indexRow:self.indexImage))!
                 
                 
             }else{
@@ -208,24 +204,24 @@ extension HJImageBrowser{
             }
             
             
-            if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
+            if self.bottomView.isKind(of:UICollectionView.classForCoder()) {
                 
                 let view = self.bottomView as! UICollectionView
                 
-                let path = NSIndexPath.init(forRow: self.indexImage, inSection: 0)
+                let path = NSIndexPath(row: self.indexImage, section: 0)
                 
-                ve = view.cellForItemAtIndexPath(path)!
+                ve = view.cellForItem(at: path as IndexPath)!
                 
             }else{
                 
                 ve = self.bottomView.subviews[indexImage]
             }
             
-            let rect = self.bottomView.convertRect(ve.frame, toView: self)
+            let rect = self.bottomView.convert(ve.frame, to: self)
             
             tempView.frame = rect
             
-            self.collectionView.hidden = true
+            self.collectionView.isHidden = true
             
             self.collectionView.alpha = 1
             
@@ -233,9 +229,9 @@ extension HJImageBrowser{
             
             let widthS = (ima.size.width)/(ima.size.height)*heightS
             
-            UIView.animateWithDuration(animationTime, animations: {
+            UIView.animate(withDuration: animationTime, animations: {
                 
-                tempView.frame = CGRectMake(0, 0, widthS, heightS)
+                tempView.frame = CGRect(x: 0, y: 0, width: widthS, height: heightS)
                 
                 if heightS < ScreenHeight {
                     
@@ -247,7 +243,7 @@ extension HJImageBrowser{
                 
                 tempView.removeFromSuperview()
                 
-                self.collectionView.hidden = false
+                self.collectionView.isHidden = false
                 
             }
         }
@@ -255,7 +251,7 @@ extension HJImageBrowser{
     
     internal func show(){
         
-        let window = UIApplication.sharedApplication().keyWindow
+        let window = UIApplication.shared.keyWindow
         
         self.frame = (window?.bounds)!
         
@@ -263,18 +259,18 @@ extension HJImageBrowser{
         
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellId", forIndexPath: indexPath) as! HJCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! HJCell
         
         cell.bottomView = self.bottomView
         
         
-        if ((self.delegate?.getTheThumbnailImage(indexPath.row)) != nil) {
+        if ((self.delegate?.getTheThumbnailImage(indexRow: indexPath.row)) != nil) {
             
-            cell.setImageWithURL(arrayImage[indexPath.row],
+            cell.setImageWithURL(url: arrayImage[indexPath.row],
                                  placeholderImage:
-                (self.delegate?.getTheThumbnailImage(indexPath.row))!,
+                (self.delegate?.getTheThumbnailImage(indexRow: indexPath.row))!,
                                  defaultImage:self.defaultImage)
             
         }else{
@@ -284,7 +280,7 @@ extension HJImageBrowser{
                 self.defaultImage = UIImage.init()
             }
             
-            cell.setImageWithURL(arrayImage[indexPath.row],
+            cell.setImageWithURL(url: arrayImage[indexPath.row],
                                  placeholderImage:self.defaultImage,
                                  defaultImage:self.defaultImage)
         }
@@ -292,7 +288,7 @@ extension HJImageBrowser{
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return arrayImage.count
         
@@ -300,19 +296,19 @@ extension HJImageBrowser{
     
     func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
-        let firstIndexPath = self.collectionView.indexPathsForVisibleItems().first
+        let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first
         
         indexImage = firstIndexPath?.row
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
-        let path = self.collectionView.indexPathForItemAtPoint(self.collectionView.contentOffset)
+        let path = self.collectionView.indexPathForItem(at: self.collectionView.contentOffset)
         let number = path?.row
         
         imageNumberLabel.text = "\(number!)" + "/" + "\(self.arrayImage.count)"
         
-        UIView.animateWithDuration(3) {
+        UIView.animate(withDuration: 3) {
             
             self.imageNumberLabel.alpha = 0
             
@@ -322,7 +318,7 @@ extension HJImageBrowser{
     
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         
-        UIView.animateWithDuration(0.2) {
+        UIView.animate(withDuration: 0.2) {
             
             self.imageNumberLabel.alpha = 1
             
@@ -363,20 +359,17 @@ UIActionSheetDelegate{
     
     func creatUI(){
         
-        self.cireView = cireview.init(frame: CGRectMake(0, 0, 50, 50))
+        self.cireView = cireview.init(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         
         self.cireView.value  = 0
         
         self.cireView.maximumValue = 1
         
-        self.cireView.userInteractionEnabled = false
+        self.cireView.isUserInteractionEnabled = false
         
-        self.cireView.center = CGPointMake(ScreenWidth/2, ScreenHeight/2)
+        self.cireView.center = CGPoint(x: ScreenWidth/2, y: ScreenHeight/2)
         
-        BottomScroll = UIScrollView.init(frame: CGRectMake(0,
-            0,
-            ScreenWidth,
-            ScreenHeight))
+        BottomScroll = UIScrollView.init(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight))
         
         BottomScroll.delegate = self
         
@@ -388,26 +381,26 @@ UIActionSheetDelegate{
         
         BigImage = UIImageView.init()
         
-        BigImage.userInteractionEnabled = true
+        BigImage.isUserInteractionEnabled = true
         
         BottomScroll.addSubview(BigImage)
         
         self.addSubview(BottomScroll)
         
         let singleTap = UITapGestureRecognizer.init(target: self,
-                                                    action: #selector(self.oneTouch(_:)))
+                                                    action: #selector(self.oneTouch(sender:)))
         
         let doubleTap = UITapGestureRecognizer.init(target: self,
-                                                    action: #selector(self.twoTouch(_:)))
+                                                    action: #selector(self.twoTouch(sender:)))
         
         let longpressGesutre = UILongPressGestureRecognizer(target: self,
-                                                            action: #selector(self.handleLongpressGesture(_:)))
+                                                            action: #selector(self.handleLongpressGesture(sender:)))
         
         doubleTap.numberOfTapsRequired = 2
         
-        singleTap.requireGestureRecognizerToFail(doubleTap)
+        singleTap.require(toFail: doubleTap)
         
-        doubleTap.requireGestureRecognizerToFail(longpressGesutre)
+        doubleTap.require(toFail: longpressGesutre)
         
         BottomScroll.addGestureRecognizer(singleTap)
         
@@ -415,7 +408,7 @@ UIActionSheetDelegate{
         
         BottomScroll.addGestureRecognizer(longpressGesutre)
         
-        self.cireView.hidden = true
+        self.cireView.isHidden = true
         
         self.addSubview(cireView)
         
@@ -429,46 +422,44 @@ UIActionSheetDelegate{
     
     internal func setImageWithURL(url:String, placeholderImage:UIImage, defaultImage:UIImage){
         
-        self.setBigImageTheSizeOfThe(placeholderImage, defaultImage:defaultImage)
+        self.setBigImageTheSizeOfThe(bImage: placeholderImage, defaultImage:defaultImage)
         
-        self.cireView.hidden = false
+        self.cireView.isHidden = false
         
-        BigImage.sd_setImageWithURL(NSURL.init(string: url),
-                                    placeholderImage: getColorImageWithColor(),
-                                    options: .CacheMemoryOnly,
-                                    progress: { (receivedSize, expectedSize) in
-            
-            let showProgress = Float(receivedSize)/Float(expectedSize)
-            
-            self.setUpTheValue(CGFloat.init(showProgress))
-            
+        BigImage.sd_setImage(with: (NSURL.init(string: url) as! URL),
+                             placeholderImage: getColorImageWithColor(),
+                             options: .cacheMemoryOnly,
+                             progress: { (receivedSize, expectedSize) in
+                         
+                                let showProgress = Float(receivedSize)/Float(expectedSize)
+                                
+                                self.setUpTheValue(value: CGFloat.init(showProgress))
+                                
         }) { (image, error, cacheType, imageURL) in
             
-            self.cireView.hidden = true
+            self.cireView.isHidden = true
             
             if image == nil {
                 
-                self.setBigImageTheSizeOfThe(placeholderImage, defaultImage:defaultImage)
+                self.setBigImageTheSizeOfThe(bImage: placeholderImage, defaultImage:defaultImage)
                 
                 return
                 
             }
             
-            self.setBigImageTheSizeOfThe(image, defaultImage:defaultImage)
+            self.setBigImageTheSizeOfThe(bImage: image!, defaultImage:defaultImage)
             
         }
-        
-        
         
     }
     
     func setBigImageTheSizeOfThe(bImage:UIImage, defaultImage:UIImage){
         
-        self.BottomScroll.contentOffset = CGPointZero
+        self.BottomScroll.contentOffset = CGPoint.init(x: 0, y: 0)
         
-        self.BottomScroll.contentSize = CGSizeZero
+        self.BottomScroll.contentSize = CGSize(width: 0, height: 0)
         
-        self.BottomScroll.contentInset = UIEdgeInsetsZero
+        self.BottomScroll.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
         
         self.BottomScroll.zoomScale = 1
         
@@ -505,13 +496,13 @@ UIActionSheetDelegate{
             
         }
         
-        self.BigImage.frame = CGRectMake(0, 0, widthS, heightS)
+        self.BigImage.frame = CGRect(x: 0, y: 0, width: widthS, height: heightS)
         
         if heightS > ScreenHeight {
             
             self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
             
-            self.BottomScroll.contentSize = CGSizeMake(widthS, heightS)
+            self.BottomScroll.contentSize = CGSize(width: widthS, height: heightS)
             
         }else{
             
@@ -520,7 +511,7 @@ UIActionSheetDelegate{
         }
     }
     
-    func oneTouch(sender: UITapGestureRecognizer){
+    @objc func oneTouch(sender: UITapGestureRecognizer){
         
         let  tempView = UIImageView.init()
         
@@ -534,13 +525,13 @@ UIActionSheetDelegate{
         
         let ve:UIView!
         
-        if self.bottomView.isKindOfClass(UICollectionView.classForCoder()) {
+        if self.bottomView.isKind(of:UICollectionView.classForCoder()) {
             
             let view = self.bottomView as! UICollectionView
             
-            let path = NSIndexPath.init(forRow: self.indexPath().row, inSection: 0)
+            let path = NSIndexPath(row: self.indexPath().row, section: 0)
             
-            ve = view.cellForItemAtIndexPath(path)
+            ve = view.cellForItem(at: path as IndexPath)
             
         }else{
             
@@ -550,7 +541,7 @@ UIActionSheetDelegate{
         
         if ve == nil {
             
-            UIView.animateWithDuration(animationTime, animations: {
+            UIView.animate(withDuration: animationTime, animations: {
                 
                 self.superCollectionView().alpha = 0
                 
@@ -565,17 +556,17 @@ UIActionSheetDelegate{
             return
         }
         
-        let rect = self.bottomView.convertRect(ve.frame, toView: self)
+        let rect = self.bottomView.convert(ve.frame, to: self)
         
-        let poin = self.bottomView.convertPoint(ve.center, toView: self)
+        let poin = self.bottomView.convert(ve.center, to: self)
         
         let heightS = (ima?.size.height)!/(ima?.size.width)!*ScreenWidth
         
         let widthS = (ima?.size.width)!/(ima?.size.height)!*heightS
         
-        tempView.frame = CGRectMake(0, 0, widthS, heightS)
+        tempView.frame = CGRect(x: 0, y: 0, width: widthS, height: heightS)
         
-        if ima?.size.height < ScreenHeight {
+        if (ima?.size.height)! < ScreenHeight {
             
             tempView.center = (self.superview?.superview?.center)!
             
@@ -583,9 +574,9 @@ UIActionSheetDelegate{
         
         self.superCollectionView().alpha = 0.5
         
-        self.superview?.superview?.backgroundColor = UIColor.clearColor()
+        self.superview?.superview?.backgroundColor = UIColor.clear
         
-        UIView.animateWithDuration(animationTime, animations: {
+        UIView.animate(withDuration: animationTime, animations: {
             
             self.superCollectionView().alpha = 0
             
@@ -600,9 +591,9 @@ UIActionSheetDelegate{
         }
     }
     
-    func twoTouch(sender: UITapGestureRecognizer){
+    @objc func twoTouch(sender: UITapGestureRecognizer){
         
-        let touchPoint = sender.locationInView(sender.view)
+        let touchPoint = sender.location(in: sender.view)
         
         let scroll =  sender.view as! UIScrollView
         
@@ -610,13 +601,13 @@ UIActionSheetDelegate{
         
         let zs = scroll.zoomScale
         
-        UIView.animateWithDuration(0.5) {
+        UIView.animate(withDuration: 0.5) {
             
             scroll.zoomScale = (zs == 1.0) ? 2.0 : 0.0
             
         }
         
-        UIView.animateWithDuration(0.5) {
+        UIView.animate(withDuration: 0.5) {
             
             if scroll.zoomScale==2.0{
                 
@@ -628,9 +619,9 @@ UIActionSheetDelegate{
                 
                 let rectY = touchPoint.y-rectHeight/2.0
                 
-                let zoomRect = CGRectMake(rectX, rectY, rectWidth, rectHeight)
+                let zoomRect = CGRect(x: rectX, y: rectY, width: rectWidth, height: rectHeight)
                 
-                scroll.zoomToRect(zoomRect, animated: false)
+                scroll.zoom(to: zoomRect, animated: false)
                 
                 if imageView.frame.size.height > ScreenHeight {
                     
@@ -658,14 +649,14 @@ UIActionSheetDelegate{
         }
     }
     
-    func handleLongpressGesture(sender : UILongPressGestureRecognizer){
+    @objc func handleLongpressGesture(sender : UILongPressGestureRecognizer){
         
-        if (sender.state == .Began) {
+        if (sender.state == .began) {
             
             
             let saveImageAlt = UIActionSheet.init(title: "保存图片到本地", delegate: self, cancelButtonTitle: "取消", destructiveButtonTitle: "保存")
             
-            saveImageAlt.showInView(self)
+            saveImageAlt.show(in: self)
         }
     }
     
@@ -675,13 +666,13 @@ UIActionSheetDelegate{
             
             UIImageWriteToSavedPhotosAlbum(self.BigImage.image!,
                                            self,
-                                           #selector(HJCell.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                                           #selector(HJCell.image(image:didFinishSavingWithError:contextInfo:)), nil)
             
         }
         
     }
     
-    func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
+    @objc func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         
         if error != nil {
             
@@ -716,7 +707,7 @@ UIActionSheetDelegate{
         
         if image.frame.size.height > ScreenHeight {
             
-            UIView.animateWithDuration(0.2, animations: {
+            UIView.animate(withDuration: 0.2, animations: {
                 
                 self.BottomScroll.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
                 
@@ -724,7 +715,7 @@ UIActionSheetDelegate{
             
         }else{
             
-            UIView.animateWithDuration(0.2, animations: {
+            UIView.animate(withDuration: 0.2, animations: {
                 
                 self.BottomScroll.contentInset = UIEdgeInsetsMake((self.BottomScroll.frame.size.height - image.frame.size.height)/2, 0, 0, 0)
                 
@@ -736,15 +727,15 @@ UIActionSheetDelegate{
         
         let collectionView = self.superCollectionView
         
-        let indexPath = collectionView().indexPathForCell(self)
+        let indexPath = collectionView().indexPath(for: self)
         
-        return indexPath!;
+        return indexPath! as NSIndexPath;
         
     }
     
     func superCollectionView() ->UICollectionView{
         
-        return self.findSuperViewWithClass(UICollectionView.classForCoder()) as! UICollectionView
+        return self.findSuperViewWithClass(superViewClass: UICollectionView.classForCoder()) as! UICollectionView
         
     }
     
@@ -756,7 +747,7 @@ UIActionSheetDelegate{
         
         while (superView != nil && foundSuperView == nil) {
             
-            if ((superView?.isKindOfClass(superViewClass)) != nil) {
+            if ((superView?.isKind(of:superViewClass)) != nil) {
                 
                 foundSuperView = superView
                 
@@ -792,13 +783,13 @@ class cireview: UIView{
         
         super.init(frame: frame)
         
-        self.opaque = false
+        self.isOpaque = false
         
         self.backgroundColor = progressViewBackColor
         
-        contentLabel = UILabel.init(frame: CGRectMake(10, 10, 30, 30))
+        contentLabel = UILabel.init(frame: CGRect(x: 10, y: 10, width: 30, height: 30))
         
-        contentLabel.textAlignment = .Center
+        contentLabel.textAlignment = .center
         
         contentLabel.textColor = progressColor
         
@@ -809,16 +800,16 @@ class cireview: UIView{
         self.addSubview(contentLabel)
     }
 
-    override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
         
         let lineWidth: CGFloat = 5.0
         
-        let radius = CGRectGetWidth(rect) / 2.0 - lineWidth
+        let radius = rect.width / 2.0 - lineWidth
         
-        let centerX = CGRectGetMidX(rect)
+        let centerX = rect.origin.x
         
-        let centerY = CGRectGetMidY(rect)
+        let centerY = rect.origin.y
         
         let startAngle = CGFloat(-90 * M_PI / 180)
     
@@ -826,19 +817,19 @@ class cireview: UIView{
         
         let context = UIGraphicsGetCurrentContext()
         
-        CGContextSetStrokeColorWithColor(context!, progressArticleColor)
+        context!.setStrokeColor(progressArticleColor)
         
-        CGContextSetLineWidth(context!, lineWidth)
+        context!.setLineWidth(lineWidth)
         
-        CGContextAddArc(context!, centerX, centerY, radius, startAngle, endAngle, 0)
+//        CGContextAddArc(context!, centerX, centerY, radius, startAngle, endAngle, 0)
         
-        CGContextStrokePath(context!)
+        context!.strokePath()
         
-        CGContextSetStrokeColorWithColor(context!, progressBackColor)
+        context!.setStrokeColor(progressBackColor)
         
-        CGContextAddArc(context!, centerX, centerY, radius, startAngle, endAngle, 1)
+//        CGContext(data: context, width: centerX, height: centerY, bitsPerComponent: radius, bytesPerRow: startAngle, space: endAngle, bitmapInfo: 1)
         
-        CGContextStrokePath(context!)
+        context!.strokePath()
         
         let content = Int(self.value * 100)
         
@@ -857,46 +848,46 @@ class cireview: UIView{
 import Foundation
 
 ///屏幕高度 && The screen height
-let ScreenHeight = UIScreen.mainScreen().bounds.size.height
+let ScreenHeight = UIScreen.main.bounds.size.height
 
 ///屏幕宽度 && The width of the screen
-let ScreenWidth = UIScreen.mainScreen().bounds.size.width
+let ScreenWidth = UIScreen.main.bounds.size.width
 
 ///图片与图片之间的间隔 && The interval between images and pictures
 let imageInterval = CGFloat(20)
 
 ///视图的背景颜色 && The background color of the view
-let viewTheBackgroundColor = UIColor.blackColor()
+let viewTheBackgroundColor = UIColor.black
 
 /// 动画时间 && Animation time
 let animationTime = 0.5
 
 ///  进度条字体颜色 The progress bar font color
-let progressColor = UIColor.blackColor()
+let progressColor = UIColor.black
 
 ///  进度条 条的背景颜色 && The background color of the article the progress bar
-let progressBackColor =  UIColor.darkGrayColor().CGColor
+let progressBackColor =  UIColor.darkGray.cgColor
 
 ///  进度条 条的颜色 && The progress bar of the color
-let progressArticleColor =  UIColor.whiteColor().CGColor
+let progressArticleColor =  UIColor.white.cgColor
 
 /// 进度条View背景色 && The progress bar View the background color
-let progressViewBackColor = UIColor.clearColor()
+let progressViewBackColor = UIColor.clear
 
 /// 默认背景图片颜色获取和设置 && The default color to get and set background image
 func getColorImageWithColor() ->(UIImage){
     
-    let color = UIColor.brownColor()
+    let color = UIColor.brown
     
-    let rect = CGRectMake(0, 0, ScreenWidth, 200)
+    let rect = CGRect.init(x: 0, y: 0, width: ScreenWidth, height: 200)
     
     UIGraphicsBeginImageContext(rect.size);
     
     let context = UIGraphicsGetCurrentContext();
     
-    CGContextSetFillColorWithColor(context!, color.CGColor);
+    context!.setFillColor(color.cgColor);
     
-    CGContextFillRect(context!, rect);
+    context!.fill(rect);
     
     let img = UIGraphicsGetImageFromCurrentImageContext();
     
